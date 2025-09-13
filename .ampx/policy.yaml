@@ -1,0 +1,38 @@
+version: 1
+modes:
+  default:
+    read_only: true
+    network: false
+    max_runtime_sec: 300
+    max_tokens: 200000
+  apply:
+    read_only: false
+    network: false
+    max_runtime_sec: 300
+    max_tokens: 200000
+models:
+  primary_alias: gpt-4
+  secondary_alias: claude-3-sonnet
+limits:
+  max_files: 4000
+  max_file_bytes: 800000
+  max_patch_bytes: 200000
+  max_iterations: 4
+allowlist:
+  commands:
+    - ["go", "build"]
+    - ["go", "test", "-cover"]
+    - ["cargo", "build"]
+    - ["cargo", "llvm-cov"]
+    - ["semgrep", "--config", "auto"]
+    - ["codeql", "database", "analyze"]
+    - ["gh", "pr", "create"]
+patch:
+  require_tests: true
+  commit_style: conventional
+  signoff: true
+security:
+  deny_paths: ["/.sentinel", "/AGENT.md", "/.git", "/etc", "/usr"]
+  deny_globs: ["**/.sentinel/**", "**/.git/**"]
+logging:
+  pii_redaction: true

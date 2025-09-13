@@ -1,0 +1,66 @@
+version: 1
+modes:
+  default:
+    read_only: true
+    network: false
+    max_runtime_sec: 600
+    max_tokens: 500000
+  apply:
+    read_only: false
+    network: false
+    max_runtime_sec: 600
+    max_tokens: 500000
+models:
+  primary_alias: gpt-4
+  secondary_alias: claude-3-sonnet
+limits:
+  max_files: 10000
+  max_file_bytes: 1000000
+  max_patch_bytes: 500000
+  max_iterations: 8
+allowlist:
+  commands:
+    - ["go", "build"]
+    - ["go", "test", "-cover"]
+    - ["go", "test", "-v"]
+    - ["go", "mod", "tidy"]
+    - ["go", "mod", "download"]
+    - ["cargo", "build"]
+    - ["cargo", "test"]
+    - ["cargo", "llvm-cov"]
+    - ["npm", "test"]
+    - ["npm", "run", "build"]
+    - ["yarn", "test"]
+    - ["yarn", "build"]
+    - ["semgrep", "--config", "auto"]
+    - ["semgrep", "--config", "p/owasp-top-ten"]
+    - ["semgrep", "--config", "p/security-audit"]
+    - ["codeql", "database", "create"]
+    - ["codeql", "database", "analyze"]
+    - ["gh", "pr", "create"]
+    - ["gh", "pr", "list"]
+    - ["gh", "pr", "view"]
+patch:
+  require_tests: true
+  commit_style: conventional
+  signoff: true
+security:
+  deny_paths:
+    - "/.sentinel"
+    - "/AGENT.md"
+    - "/.git"
+    - "/.github"
+    - "/etc"
+    - "/usr"
+    - "/var"
+    - "/tmp"
+  deny_globs:
+    - "**/.sentinel/**"
+    - "**/.git/**"
+    - "**/node_modules/**"
+    - "**/vendor/**"
+    - "**/target/**"
+    - "**/build/**"
+    - "**/dist/**"
+logging:
+  pii_redaction: true
