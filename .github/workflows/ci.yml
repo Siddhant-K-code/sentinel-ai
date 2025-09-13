@@ -39,6 +39,37 @@ jobs:
     - name: Test with example
       run: |
         mkdir -p out
+        # Run scan and capture exit code
+        set +e
         ./bin/sentinel-ai scan --repo ./example --security --dead-code --sarif ./out/example.sarif --plan ./out/example-plan.json
+        exit_code=$?
+        set -e
+
+        # Check if output files were created
+        if [ ! -f "./out/example.sarif" ]; then
+          echo "ERROR: SARIF output file not created"
+          exit 1
+        fi
+
+        if [ ! -f "./out/example-plan.json" ]; then
+          echo "ERROR: Plan output file not created"
+          exit 1
+        fi
+
+        # Validate exit code (11 is expected for dead code findings)
+        if [ $exit_code -eq 11 ]; then
+          echo "SUCCESS: Scan completed with dead code findings (exit code 11)"
+        elif [ $exit_code -eq 10 ]; then
+          echo "SUCCESS: Scan completed with security findings (exit code 10)"
+        elif [ $exit_code -eq 0 ]; then
+          echo "SUCCESS: Scan completed with no findings (exit code 0)"
+        else
+          echo "ERROR: Unexpected exit code: $exit_code"
+          exit 1
+        fi
+
+        # Display output files
+        echo "=== SARIF Output ==="
         cat out/example.sarif
+        echo -e "\n=== Plan Output ==="
         cat out/example-plan.json
