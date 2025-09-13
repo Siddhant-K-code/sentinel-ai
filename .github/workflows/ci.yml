@@ -38,6 +38,7 @@ jobs:
 
     - name: Test with example
       run: |
+        mkdir -p out
         ./bin/sentinel-ai scan --repo ./example --security --dead-code --sarif ./out/example.sarif --plan ./out/example-plan.json
         cat out/example.sarif
         cat out/example-plan.json
